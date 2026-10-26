@@ -1,9 +1,19 @@
-// Web Audio API lightweight sound effects synthesizer (No external MP3 files needed)
+// Web Audio API lightweight synthesizer (SFX) + HTML5 Audio (BGM)
 class SoundManager {
   private ctx: AudioContext | null = null;
-  public enabled: boolean = true;
+  private bgmAudio: HTMLAudioElement | null = null;
+  public sfxEnabled: boolean = true;
+  public bgmEnabled: boolean = true;
+  public isBgmPlaying: boolean = false;
 
-  private init() {
+  get enabled(): boolean {
+    return this.sfxEnabled;
+  }
+  set enabled(val: boolean) {
+    this.sfxEnabled = val;
+  }
+
+  private initCtx() {
     if (!this.ctx && typeof window !== 'undefined') {
       const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
       if (AudioCtx) {
@@ -12,9 +22,65 @@ class SoundManager {
     }
   }
 
+  private initBgm() {
+    if (!this.bgmAudio && typeof window !== 'undefined') {
+      this.bgmAudio = new Audio('/audio/Before_the_Strike.mp3');
+      this.bgmAudio.loop = true;
+      this.bgmAudio.volume = 0.35; // Suara latar nyaman & tidak memekakkan telinga
+
+      this.bgmAudio.addEventListener('play', () => {
+        this.isBgmPlaying = true;
+      });
+      this.bgmAudio.addEventListener('pause', () => {
+        this.isBgmPlaying = false;
+      });
+    }
+  }
+
+  public startBGM() {
+    if (!this.bgmEnabled) return;
+    this.initBgm();
+    if (this.bgmAudio && this.bgmAudio.paused) {
+      const playPromise = this.bgmAudio.play();
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => {
+            this.isBgmPlaying = true;
+          })
+          .catch(() => {
+            // Browser autoplay restrictions require user interaction first
+            this.isBgmPlaying = false;
+          });
+      }
+    }
+  }
+
+  public pauseBGM() {
+    if (this.bgmAudio && !this.bgmAudio.paused) {
+      this.bgmAudio.pause();
+      this.isBgmPlaying = false;
+    }
+  }
+
+  public toggleBGM(): boolean {
+    this.bgmEnabled = !this.bgmEnabled;
+    if (this.bgmEnabled) {
+      this.startBGM();
+    } else {
+      this.pauseBGM();
+    }
+    return this.bgmEnabled;
+  }
+
+  public setBGMVolume(val: number) {
+    if (this.bgmAudio) {
+      this.bgmAudio.volume = Math.max(0, Math.min(1, val));
+    }
+  }
+
   public playClick() {
-    if (!this.enabled) return;
-    this.init();
+    if (!this.sfxEnabled) return;
+    this.initCtx();
     if (!this.ctx) return;
     try {
       const osc = this.ctx.createOscillator();
@@ -32,8 +98,8 @@ class SoundManager {
   }
 
   public playSelect() {
-    if (!this.enabled) return;
-    this.init();
+    if (!this.sfxEnabled) return;
+    this.initCtx();
     if (!this.ctx) return;
     try {
       const osc = this.ctx.createOscillator();
@@ -51,8 +117,8 @@ class SoundManager {
   }
 
   public playStartGame() {
-    if (!this.enabled) return;
-    this.init();
+    if (!this.sfxEnabled) return;
+    this.initCtx();
     if (!this.ctx) return;
     try {
       const notes = [261.63, 329.63, 392.00, 523.25];

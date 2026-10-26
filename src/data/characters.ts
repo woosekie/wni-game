@@ -6,7 +6,8 @@ export const CHARACTERS: Character[] = [
     name: 'Pejabat / Pemerintah',
     roleTitle: 'Birokrat & Penguasa Anggaran',
     tagline: 'Modal aman, fasilitas dinas lancar, asal jangan senggol gedung merah putih.',
-    image: '/assets/characters/pejabat.png',
+    image: '/assets/characters/pemerintah.jfif',
+    selectedImage: '/assets/characters/pemerintah_selected.jfif',
     color: {
       primary: '#EAB308',
       secondary: '#CA8A04',
@@ -39,7 +40,8 @@ export const CHARACTERS: Character[] = [
     name: 'Pegawai Swasta',
     roleTitle: 'Budak Korporat & Sandwich Gen',
     tagline: 'Berangkat gelap pulang gelap, gaji numpang lewat, kopi literan sahabat setia.',
-    image: '/assets/characters/pegawai.png',
+    image: '/assets/characters/pegawai.jfif',
+    selectedImage: '/assets/characters/pegawai_selected.jfif',
     color: {
       primary: '#0284C7',
       secondary: '#0369A1',
@@ -72,7 +74,8 @@ export const CHARACTERS: Character[] = [
     name: 'Pedagang Sayur',
     roleTitle: 'Pahlawan Pangan Subuh',
     tagline: 'Bangun jam 3 pagi ke pasar induk, tahan banting, lihai negosiasi harga cabai.',
-    image: '/assets/characters/pedagang.png',
+    image: '/assets/characters/pedagang.jfif',
+    selectedImage: '/assets/characters/pedagang_selected.jfif',
     color: {
       primary: '#16A34A',
       secondary: '#15803D',
@@ -105,7 +108,8 @@ export const CHARACTERS: Character[] = [
     name: 'Influencer',
     roleTitle: 'Kreator Konten & Seleb Medsos',
     tagline: 'Semua demi konten, camera ready 24/7, validasi netizen adalah denyut nadi.',
-    image: '/assets/characters/influencer.png',
+    image: '/assets/characters/influencer.jfif',
+    selectedImage: '/assets/characters/influencer_selected.jfif',
     color: {
       primary: '#D946EF',
       secondary: '#C026D3',
@@ -138,7 +142,8 @@ export const CHARACTERS: Character[] = [
     name: 'Mahasiswa',
     roleTitle: 'Aktivis Idealis Dompet Tipis',
     tagline: 'Fisik kuat begadang mie instan, semangat membara, tapi rekening sisa Rp 14.500.',
-    image: '/assets/characters/mahasiswa.png',
+    image: '/assets/characters/mahasiswa.jfif',
+    selectedImage: '/assets/characters/mahasiswa_selected.jfif',
     color: {
       primary: '#EA580C',
       secondary: '#C2410C',

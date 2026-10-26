@@ -1,4 +1,4 @@
-﻿export type LuckLevel = 'Rendah' | 'Sedang' | 'Tinggi' | 'Sangat Tinggi';
+export type LuckLevel = 'Rendah' | 'Sedang' | 'Tinggi' | 'Sangat Tinggi';
 
 export interface CharacterTrait {
   title: string;
@@ -11,7 +11,8 @@ export interface Character {
   name: string;
   roleTitle: string;
   tagline: string;
-  image: string; // Path ke /assets/characters/*.png
+  image: string; // Path ke /assets/characters/*.jfif atau *.png
+  selectedImage?: string; // Path ke asset karakter saat terpilih (selected)
   color: {
     primary: string;
     secondary: string;

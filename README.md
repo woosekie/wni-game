@@ -43,18 +43,18 @@ Fokus tahap awal ini adalah **Halaman Pilih Karakter (Character Selection Screen
 
 ---
 
-## 🖼️ Penggantian Aset Gambar Karakter (PNG)
+## 🖼️ Penggantian Aset Gambar Karakter
 
 Aset ilustrasi karakter tersimpan di folder:
 ```text
 public/assets/characters/
-├── pejabat.png
-├── pegawai.png
-├── pedagang.png
-├── influencer.png
-└── mahasiswa.png
+├── pemerintah.jfif
+├── pegawai.jfif
+├── pedagang.jfif
+├── influencer.jfif
+└── mahasiswa.jfif
 ```
-Cukup gantikan file di folder tersebut dengan file ilustrasi PNG Anda. Tag `<img>` sudah dikonfigurasi dengan `object-contain`, animasi idle, dan `drop-shadow` agar gambar PNG tampak menonjol dan hidup.
+Sistem mendukung file format `.jfif`, `.png`, `.jpg`, maupun `.webp`. Cukup sesuaikan path di `src/data/characters.ts`. Komponen kartu karakter telah dilengkapi efek komik, animasi idle, dan frame collectible card yang responsif.
 
 ---
 

@@ -53,7 +53,7 @@ export const MultiplayerPanel: React.FC<MultiplayerPanelProps> = ({
           <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider block">
             Kode Ruangan (Room Code):
           </span>
-          <span className="font-comic text-xl text-comic-yellow tracking-widest comic-stroke-sm">
+          <span className="font-black text-xl text-comic-yellow tracking-widest comic-stroke-sm">
             {roomCode}
           </span>
         </div>

@@ -34,7 +34,8 @@ export default {
         'comic-yellow': '4px 4px 0px #CA8A04',
       },
       fontFamily: {
-        comic: ['"Bungee"', '"Titan One"', 'Impact', 'sans-serif'],
+        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+        comic: ['"Plus Jakarta Sans"', 'sans-serif'],
         display: ['"Plus Jakarta Sans"', 'sans-serif'],
       },
       keyframes: {

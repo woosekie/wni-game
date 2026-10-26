@@ -1,33 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { Character } from '../types/game';
 import { StatBar } from './StatBar';
-import {
-  Wallet,
-  HeartPulse,
-  Brain,
-  Sparkles,
-  ShieldCheck,
-  AlertTriangle,
-  Quote,
-  Flame,
-  Award
-} from 'lucide-react';
+const stickerMap: Record<string, { text: string; bg: string; textCol: string }> = {
+  pejabat: { text: 'CUAN RAKYAT!', bg: 'bg-amber-400', textCol: 'text-black' },
+  pegawai: { text: 'DEADLINE BOS!', bg: 'bg-sky-400', textCol: 'text-black' },
+  pedagang: { text: 'SEGAR & IRIT!', bg: 'bg-emerald-400', textCol: 'text-black' },
+  influencer: { text: 'VIRAL GASSS!', bg: 'bg-fuchsia-400', textCol: 'text-black' },
+  mahasiswa: { text: 'MERDEKA!', bg: 'bg-orange-500', textCol: 'text-white' },
+};
 
 interface CharacterDetailProps {
   character: Character;
 }
 
-const stickerMap: Record<string, { text: string; bg: string; textCol: string }> = {
-  pejabat: { text: 'CUAN RAKYAT! 💸', bg: 'bg-amber-400', textCol: 'text-black' },
-  pegawai: { text: 'DEADLINE BOS! ☕', bg: 'bg-sky-400', textCol: 'text-black' },
-  pedagang: { text: 'SEGAR & IRIT! 🥬', bg: 'bg-emerald-400', textCol: 'text-black' },
-  influencer: { text: 'VIRAL GASSS! ✨', bg: 'bg-fuchsia-400', textCol: 'text-black' },
-  mahasiswa: { text: 'MERDEKA! ✊', bg: 'bg-orange-500', textCol: 'text-white' },
-};
-
 export const CharacterDetail: React.FC<CharacterDetailProps> = ({ character }) => {
   const [imgError, setImgError] = useState(false);
+  const displayImage = character.selectedImage || character.image;
+
+  useEffect(() => {
+    setImgError(false);
+  }, [character.id, displayImage]);
 
   const formatCurrency = (amount: number) => {
     return 'Rp ' + amount.toLocaleString('id-ID');
@@ -64,41 +57,8 @@ export const CharacterDetail: React.FC<CharacterDetailProps> = ({ character }) =
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -15 }}
           transition={{ duration: 0.3 }}
-          className="relative z-10 flex flex-col gap-6"
+          className="relative z-10"
         >
-          {/* Top Header Section */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b-2 border-black/80 pb-4">
-            <div>
-              <div className="flex items-center gap-2 flex-wrap">
-                <span
-                  className="text-xs font-black px-2.5 py-1 rounded-md border-2 border-black text-black shadow-[2px_2px_0px_#000] uppercase tracking-wider flex items-center gap-1"
-                  style={{ backgroundColor: character.color.primary }}
-                >
-                  <Award size={13} className="stroke-[3]" />
-                  {character.badge}
-                </span>
-                <span className="text-xs font-bold px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">
-                  Tingkat Kesulitan: <span className="text-white font-extrabold">{character.difficulty}</span>
-                </span>
-              </div>
-
-              <h2 className="text-2xl sm:text-3xl font-black text-white tracking-wide mt-2 font-display">
-                {character.name}
-              </h2>
-              <p className="text-xs sm:text-sm font-semibold text-slate-300">
-                {character.roleTitle}
-              </p>
-            </div>
-
-            {/* Satiric Quote Box */}
-            <div className="sm:max-w-xs bg-slate-950/80 border-2 border-black rounded-xl p-2.5 shadow-[3px_3px_0px_#000] relative">
-              <Quote size={16} className="text-comic-yellow absolute -top-2.5 -left-2 fill-comic-yellow" />
-              <p className="text-[11px] sm:text-xs text-slate-300 italic font-medium leading-relaxed pl-2">
-                {character.quote}
-              </p>
-            </div>
-          </div>
-
           {/* Main Visual & Stats Split */}
           <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
             {/* Visual Character Illustration */}
@@ -128,37 +88,56 @@ export const CharacterDetail: React.FC<CharacterDetailProps> = ({ character }) =
                 {sticker.text}
               </motion.div>
 
-              {/* Animated Floating Character PNG */}
+              {/* Animated Floating Character Card Frame */}
               <motion.div
-                animate={{ y: [-8, 8, -8], rotate: [-0.5, 0.5, -0.5] }}
+                animate={{ y: [-6, 6, -6], rotate: [-0.5, 0.5, -0.5] }}
                 transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut' }}
-                className="relative z-20 w-56 h-64 sm:w-64 sm:h-72 flex items-center justify-center"
+                className="relative z-20 w-56 h-72 sm:w-64 sm:h-80 flex items-center justify-center"
               >
                 {!imgError ? (
-                  <img
-                    src={character.image}
-                    alt={character.name}
-                    onError={() => setImgError(true)}
-                    className="max-h-full max-w-full object-contain drop-shadow-[0_16px_25px_rgba(0,0,0,0.85)] filter select-none pointer-events-none transition-all duration-300"
-                  />
+                  <div className="w-full h-full rounded-2xl border-4 border-black shadow-comic-lg overflow-hidden relative bg-slate-900 group">
+                    <img
+                      key={displayImage}
+                      src={displayImage}
+                      alt={character.name}
+                      onError={() => setImgError(true)}
+                      className="w-full h-full object-cover object-top select-none pointer-events-none transition-transform duration-500 group-hover:scale-105"
+                    />
+                    {/* Comic card bottom gradient & label */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-transparent pointer-events-none" />
+                    <div className="absolute bottom-2.5 left-3 right-3 flex items-center justify-between pointer-events-none">
+                      <span
+                        className="text-[10px] font-black px-2 py-0.5 rounded border border-black uppercase text-black shadow-[1px_1px_0px_#000]"
+                        style={{ backgroundColor: character.color.primary }}
+                      >
+                        {character.badge}
+                      </span>
+                      <span className="text-[11px] font-bold text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] truncate max-w-[120px]">
+                        {character.name}
+                      </span>
+                    </div>
+                  </div>
                 ) : (
                   <div className="w-48 h-48 rounded-2xl bg-slate-800 border-4 border-black shadow-comic flex flex-col items-center justify-center p-4 text-center">
                     <span className="text-6xl mb-2">
                       {character.id === 'pejabat' ? '💰' : character.id === 'pegawai' ? '💼' : character.id === 'pedagang' ? '🥬' : character.id === 'influencer' ? '📱' : '🎓'}
                     </span>
-                    <span className="text-xs font-black text-comic-yellow uppercase">
-                      /assets/characters/{character.id}.png
+                    <span className="text-xs font-black text-comic-yellow uppercase break-all">
+                      {displayImage}
                     </span>
                     <span className="text-[10px] text-slate-400 mt-1">
-                      Siap diganti file PNG kamu
+                      File gambar karakter
                     </span>
                   </div>
                 )}
               </motion.div>
 
-              <p className="text-[11px] text-slate-400 italic text-center max-w-[240px] mt-2">
-                {character.tagline}
-              </p>
+              {/* Satiric Quote Box moved under character portrait */}
+              <div className="relative mt-4 w-full max-w-[260px] sm:max-w-[280px] bg-slate-950/90 border-2 border-black rounded-xl p-2.5 sm:p-3 shadow-[3px_3px_0px_#000] z-20">
+                <p className="text-[11px] sm:text-xs text-slate-300 italic font-medium leading-relaxed text-center">
+                  "{character.quote.replace(/^"|"$/g, '')}"
+                </p>
+              </div>
             </div>
 
             {/* Stats & Progress Bars Section */}
@@ -168,8 +147,7 @@ export const CharacterDetail: React.FC<CharacterDetailProps> = ({ character }) =
                   <span className="text-xs font-black uppercase text-slate-400 tracking-wider">
                     Status Awal Kehidupan
                   </span>
-                  <span className="text-xs font-bold text-comic-yellow flex items-center gap-1">
-                    <Flame size={14} className="fill-comic-yellow" />
+                  <span className="text-xs font-bold text-comic-yellow">
                     Kondisi Awal Game
                   </span>
                 </div>
@@ -181,7 +159,6 @@ export const CharacterDetail: React.FC<CharacterDetailProps> = ({ character }) =
                   value={character.stats.uangAwal}
                   max={10000000}
                   displayValue={formatCurrency(character.stats.uangAwal)}
-                  icon={Wallet}
                   colorScheme="gold"
                 />
 
@@ -192,7 +169,6 @@ export const CharacterDetail: React.FC<CharacterDetailProps> = ({ character }) =
                   value={character.stats.kesehatan}
                   max={100}
                   displayValue={`${character.stats.kesehatan} / 100`}
-                  icon={HeartPulse}
                   colorScheme="emerald"
                 />
 
@@ -203,15 +179,13 @@ export const CharacterDetail: React.FC<CharacterDetailProps> = ({ character }) =
                   value={character.stats.mental}
                   max={100}
                   displayValue={`${character.stats.mental} / 100`}
-                  icon={Brain}
                   colorScheme="sky"
                 />
 
                 {/* 4. Luck Level */}
                 <div className="pt-1 flex items-center justify-between text-xs sm:text-sm font-bold bg-slate-900/80 px-3 py-2 rounded-lg border border-black/80">
-                  <span className="flex items-center gap-1.5 text-slate-300">
-                    <Sparkles size={14} className="text-amber-400" />
-                    <span className="uppercase tracking-wider font-extrabold text-xs">Tingkat Keberuntungan:</span>
+                  <span className="text-slate-300 uppercase tracking-wider font-extrabold text-xs">
+                    Tingkat Keberuntungan:
                   </span>
                   <span className="text-amber-300 font-black tracking-wide">
                     {getLuckStars(character.stats.luck)}
@@ -224,11 +198,8 @@ export const CharacterDetail: React.FC<CharacterDetailProps> = ({ character }) =
                 {/* Buff (Hijau) */}
                 <div className="bg-emerald-950/40 border-2 sm:border-3 border-emerald-500 rounded-xl p-3 sm:p-3.5 shadow-[3px_3px_0px_#059669] flex flex-col justify-between">
                   <div>
-                    <div className="flex items-center gap-1.5 text-emerald-400 font-black text-xs uppercase mb-1.5">
-                      <span className="p-1 rounded bg-emerald-500/20 border border-emerald-400">
-                        <ShieldCheck size={14} className="stroke-[2.5]" />
-                      </span>
-                      <span>BUFF SPESIAL</span>
+                    <div className="text-emerald-400 font-black text-xs uppercase mb-1.5">
+                      BUFF SPESIAL
                     </div>
                     <h4 className="text-xs sm:text-sm font-black text-white mb-1">
                       {character.buff.title}
@@ -242,11 +213,8 @@ export const CharacterDetail: React.FC<CharacterDetailProps> = ({ character }) =
                 {/* Debuff (Merah) */}
                 <div className="bg-rose-950/40 border-2 sm:border-3 border-rose-500 rounded-xl p-3 sm:p-3.5 shadow-[3px_3px_0px_#DC2626] flex flex-col justify-between">
                   <div>
-                    <div className="flex items-center gap-1.5 text-rose-400 font-black text-xs uppercase mb-1.5">
-                      <span className="p-1 rounded bg-rose-500/20 border border-rose-400">
-                        <AlertTriangle size={14} className="stroke-[2.5]" />
-                      </span>
-                      <span>DEBUFF BAHAYA</span>
+                    <div className="text-rose-400 font-black text-xs uppercase mb-1.5">
+                      DEBUFF BAHAYA
                     </div>
                     <h4 className="text-xs sm:text-sm font-black text-white mb-1">
                       {character.debuff.title}

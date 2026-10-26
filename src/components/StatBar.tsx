@@ -1,13 +1,11 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import type { LucideIcon } from 'lucide-react';
 
 interface StatBarProps {
   label: string;
   value: number;
   max?: number;
   displayValue: string;
-  icon: LucideIcon;
   colorScheme: 'gold' | 'emerald' | 'sky' | 'rose' | 'amber';
   sublabel?: string;
 }
@@ -45,7 +43,6 @@ export const StatBar: React.FC<StatBarProps> = ({
   value,
   max = 100,
   displayValue,
-  icon: Icon,
   colorScheme,
   sublabel,
 }) => {
@@ -56,9 +53,6 @@ export const StatBar: React.FC<StatBarProps> = ({
     <div className="space-y-1.5">
       <div className="flex items-center justify-between text-xs sm:text-sm font-bold">
         <span className="flex items-center gap-1.5 text-slate-300">
-          <span className={`p-1 rounded bg-black/50 border border-black/80 ${colors.text}`}>
-            <Icon size={14} className="stroke-[2.5]" />
-          </span>
           <span className="uppercase tracking-wider font-extrabold text-xs">{label}</span>
           {sublabel && (
             <span className="text-[10px] text-slate-400 font-normal hidden sm:inline">({sublabel})</span>

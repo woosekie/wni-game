@@ -100,7 +100,7 @@ export const BotConfigPanel: React.FC<BotConfigPanelProps> = ({
                   <img
                     src={selectedChar.image}
                     alt={selectedChar.name}
-                    className="w-full h-full object-contain"
+                    className="w-full h-full object-cover object-top"
                     onError={(e) => {
                       (e.currentTarget as HTMLElement).style.display = 'none';
                     }}
