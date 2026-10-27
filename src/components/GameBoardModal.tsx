@@ -44,13 +44,12 @@ export const GameBoardModal: React.FC<GameBoardModalProps> = ({
             <div className="inline-block px-3 py-1 bg-comic-yellow text-black font-black text-xs uppercase tracking-wider rounded-full border-2 border-black shadow-[2px_2px_0px_#000] mb-2">
               KARAKTER SIAP BERAKSI
             </div>
-            <h2 className="text-2xl sm:text-3xl font-black text-white font-display">
+            <h2 className="text-2xl sm:text-3xl font-black text-white font-sans">
               SIAP BERTAHAN HIDUP DI INDONESIA!
             </h2>
             <p className="text-xs sm:text-sm text-slate-300 mt-1">
               Karakter Terpilih:{' '}
-              <span className="text-comic-yellow font-black">{selectedCharacter.name}</span>{' '}
-              <span className="text-slate-400">({selectedCharacter.badge})</span>
+              <span className="text-comic-yellow font-black">{selectedCharacter.name}</span>
             </p>
           </div>
 

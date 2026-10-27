@@ -105,13 +105,7 @@ export const CharacterDetail: React.FC<CharacterDetailProps> = ({ character }) =
                     />
                     {/* Comic card bottom gradient & label */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-transparent pointer-events-none" />
-                    <div className="absolute bottom-2.5 left-3 right-3 flex items-center justify-between pointer-events-none">
-                      <span
-                        className="text-[10px] font-black px-2 py-0.5 rounded border border-black uppercase text-black shadow-[1px_1px_0px_#000]"
-                        style={{ backgroundColor: character.color.primary }}
-                      >
-                        {character.badge}
-                      </span>
+                    <div className="absolute bottom-2.5 left-3 right-3 flex items-center justify-end pointer-events-none">
                       <span className="text-[11px] font-bold text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] truncate max-w-[120px]">
                         {character.name}
                       </span>

@@ -86,14 +86,6 @@ export const CharacterCard: React.FC<CharacterCardProps> = ({
             </span>
           </div>
         )}
-
-        {/* Role Badge pinned at top-left */}
-        <span
-          className="absolute top-1.5 left-1.5 text-[9px] sm:text-[10px] font-black px-1.5 py-0.5 rounded border border-black uppercase text-black z-20 shadow-[1px_1px_0px_#000]"
-          style={{ backgroundColor: character.color.primary }}
-        >
-          {character.badge}
-        </span>
       </div>
 
       {/* Character Info */}
