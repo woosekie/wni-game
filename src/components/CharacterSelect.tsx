@@ -74,7 +74,7 @@ export const CharacterSelect: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen text-white pb-28 pt-4 sm:pt-6 px-3 sm:px-6 max-w-7xl mx-auto">
+    <div className="min-h-screen text-white pb-10 pt-4 sm:pt-6 px-3 sm:px-6 max-w-7xl mx-auto">
       {/* Top Right Corner Audio Controls */}
       <div className="fixed top-3 right-3 sm:top-4 sm:right-6 z-50 flex items-center gap-2">
         {/* BGM Toggle Button */}
@@ -108,13 +108,21 @@ export const CharacterSelect: React.FC = () => {
 
       {/* Horizontal Character Roster Section */}
       <section className="mb-6">
-        <div className="flex items-center justify-between px-1 mb-4 sm:mb-5">
-          <h2 className="text-sm font-black uppercase text-slate-200 tracking-wider">
+        <div className="flex items-center justify-between gap-2 px-1 mb-4 sm:mb-5">
+          <h2 className="text-sm sm:text-base font-black uppercase text-white tracking-wider drop-shadow-[2px_2px_0px_#000] bg-slate-900/85 border-2 border-black px-3 py-1.5 rounded-lg shadow-comic">
             Pilih Karaktermu ({CHARACTERS.length} Pilihan)
           </h2>
-          <span className="text-[10px] font-bold text-comic-yellow sm:hidden">
-            Geser horizontal
-          </span>
+
+          {/* CTA Start Game Button */}
+          <motion.button
+            type="button"
+            onClick={handleStartGame}
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.96 }}
+            className="px-4 sm:px-6 py-1.5 rounded-lg border-2 border-black bg-comic-yellow hover:bg-yellow-300 text-black font-black text-sm sm:text-base shadow-comic hover:shadow-comic-lg active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all flex items-center justify-center cursor-pointer uppercase tracking-wider"
+          >
+            START GAME
+          </motion.button>
         </div>
 
         {/* Horizontal Row: smooth swipe on mobile, 5-column grid on desktop */}
@@ -136,22 +144,6 @@ export const CharacterSelect: React.FC = () => {
       <section className="mb-6">
         <CharacterDetail character={selectedCharacter} />
       </section>
-
-      {/* Bottom Sticky Action Bar */}
-      <footer className="fixed bottom-0 left-0 right-0 z-40 bg-slate-950/95 border-t-4 border-black p-3 sm:p-4 backdrop-blur-md shadow-[0_-10px_25px_rgba(0,0,0,0.6)]">
-        <div className="max-w-7xl mx-auto flex items-center justify-center sm:justify-end">
-          {/* CTA Button */}
-          <motion.button
-            type="button"
-            onClick={handleStartGame}
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.96 }}
-            className="w-full sm:w-auto px-8 py-3.5 rounded-xl border-3 border-black bg-comic-yellow hover:bg-yellow-300 text-black font-black text-base sm:text-lg shadow-comic hover:shadow-comic-lg active:translate-x-1 active:translate-y-1 active:shadow-none transition-all flex items-center justify-center cursor-pointer uppercase tracking-wider"
-          >
-            MULAI BERTAHAN HIDUP
-          </motion.button>
-        </div>
-      </footer>
 
       {/* Game Ready Preview Modal */}
       <GameBoardModal
