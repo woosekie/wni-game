@@ -5,6 +5,7 @@ class SoundManager {
   public sfxEnabled: boolean = true;
   public bgmEnabled: boolean = true;
   public isBgmPlaying: boolean = false;
+  public bgmVolume: number = 0.35;
 
   get enabled(): boolean {
     return this.sfxEnabled;
@@ -26,7 +27,7 @@ class SoundManager {
     if (!this.bgmAudio && typeof window !== 'undefined') {
       this.bgmAudio = new Audio('/audio/Before_the_Strike.mp3');
       this.bgmAudio.loop = true;
-      this.bgmAudio.volume = 0.35; // Suara latar nyaman & tidak memekakkan telinga
+      this.bgmAudio.volume = this.bgmVolume;
 
       this.bgmAudio.addEventListener('play', () => {
         this.isBgmPlaying = true;
@@ -73,8 +74,9 @@ class SoundManager {
   }
 
   public setBGMVolume(val: number) {
+    this.bgmVolume = Math.max(0, Math.min(1, val));
     if (this.bgmAudio) {
-      this.bgmAudio.volume = Math.max(0, Math.min(1, val));
+      this.bgmAudio.volume = this.bgmVolume;
     }
   }
 

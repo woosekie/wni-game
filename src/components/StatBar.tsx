@@ -52,10 +52,10 @@ export const StatBar: React.FC<StatBarProps> = ({
   return (
     <div className="space-y-1.5">
       <div className="flex items-center justify-between text-xs sm:text-sm font-bold">
-        <span className="flex items-center gap-1.5 text-slate-300">
-          <span className="uppercase tracking-wider font-extrabold text-xs">{label}</span>
+        <span className="flex items-center gap-1.5 text-white">
+          <span className="text-xs sm:text-sm font-black text-white leading-tight">{label}</span>
           {sublabel && (
-            <span className="text-[10px] text-slate-400 font-normal hidden sm:inline">({sublabel})</span>
+            <span className="text-[10px] text-white font-normal hidden sm:inline">({sublabel})</span>
           )}
         </span>
         <span className={`font-black text-xs sm:text-sm tracking-wide ${colors.text}`}>

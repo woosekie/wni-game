@@ -54,7 +54,7 @@ export const CharacterCard: React.FC<CharacterCardProps> = ({
       {/* Selected Indicator Ribbon */}
       {isSelected && (
         <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 z-30 pointer-events-none">
-          <div className="bg-comic-yellow text-black font-black text-[10px] sm:text-[11px] px-3 py-0.5 rounded-full border-2 border-black shadow-[2px_2px_0px_#000] whitespace-nowrap animate-pulse">
+          <div className="bg-comic-yellow text-black font-black text-[10px] sm:text-[11px] px-3 py-0.5 rounded-full border-2 border-black shadow-[2px_2px_0px_#000] whitespace-nowrap">
             PILIHANMU
           </div>
         </div>
@@ -91,17 +91,17 @@ export const CharacterCard: React.FC<CharacterCardProps> = ({
       {/* Character Info */}
       <div className="w-full flex-1 flex flex-col justify-between">
         <div>
-          <h3 className="text-xs sm:text-sm font-black text-white truncate leading-tight group-hover:text-comic-yellow transition-colors">
+          <h3 className="text-xs sm:text-sm font-black text-white truncate leading-tight">
             {character.name}
           </h3>
-          <p className="text-[10px] sm:text-[11px] text-slate-400 truncate mt-0.5">
+          <p className="text-[10px] sm:text-[11px] text-white truncate mt-0.5">
             {character.roleTitle}
           </p>
         </div>
 
         {/* Quick Stats Badges */}
         <div className="flex items-center justify-between gap-1 mt-2.5 pt-2 border-t border-slate-800 text-[10px] sm:text-[11px] font-bold">
-          <span className="text-amber-300">
+          <span className="text-green-400">
             {formatMoney(character.stats.uangAwal)}
           </span>
           <span className="text-sky-300">

@@ -75,25 +75,25 @@ export const CharacterDetail: React.FC<CharacterDetailProps> = ({ character }) =
                 />
               </div>
 
-              {/* Floating Comic Sticker */}
-              <motion.div
-                initial={{ scale: 0, rotate: -20 }}
-                animate={{ scale: 1, rotate: [-10, 8, -10] }}
-                transition={{
-                  scale: { duration: 0.3 },
-                  rotate: { repeat: Infinity, duration: 3, ease: 'easeInOut' }
-                }}
-                className={`absolute top-2 right-4 sm:right-6 ${sticker.bg} ${sticker.textCol} font-black text-[11px] sm:text-xs px-3 py-1 rounded-md border-2 border-black shadow-[3px_3px_0px_#000] z-30 transform -rotate-12 select-none`}
-              >
-                {sticker.text}
-              </motion.div>
-
               {/* Animated Floating Character Card Frame */}
               <motion.div
                 animate={{ y: [-6, 6, -6], rotate: [-0.5, 0.5, -0.5] }}
                 transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut' }}
                 className="relative z-20 w-56 h-72 sm:w-64 sm:h-80 flex items-center justify-center"
               >
+                {/* Floating Comic Sticker anchored to top-right of portrait */}
+                <motion.div
+                  initial={{ scale: 0, rotate: -20 }}
+                  animate={{ scale: 1, rotate: [-10, 8, -10] }}
+                  transition={{
+                    scale: { duration: 0.3 },
+                    rotate: { repeat: Infinity, duration: 3, ease: 'easeInOut' }
+                  }}
+                  className={`absolute top-2 -right-4 sm:-right-6 ${sticker.bg} ${sticker.textCol} font-black text-[11px] sm:text-xs px-3 py-1 rounded-md border-2 border-black shadow-[3px_3px_0px_#000] z-30 transform -rotate-12 select-none`}
+                >
+                  {sticker.text}
+                </motion.div>
+
                 {!imgError ? (
                   <div className="w-full h-full rounded-2xl border-4 border-black shadow-comic-lg overflow-hidden relative bg-slate-900 group">
                     <img
@@ -128,7 +128,7 @@ export const CharacterDetail: React.FC<CharacterDetailProps> = ({ character }) =
 
               {/* Satiric Quote Box moved under character portrait */}
               <div className="relative mt-4 w-full max-w-[260px] sm:max-w-[280px] bg-slate-950/90 border-2 border-black rounded-xl p-2.5 sm:p-3 shadow-[3px_3px_0px_#000] z-20">
-                <p className="text-[11px] sm:text-xs text-slate-300 italic font-medium leading-relaxed text-center">
+                <p className="text-[11px] sm:text-xs text-white italic font-light leading-relaxed text-center">
                   "{character.quote.replace(/^"|"$/g, '')}"
                 </p>
               </div>
@@ -138,11 +138,8 @@ export const CharacterDetail: React.FC<CharacterDetailProps> = ({ character }) =
             <div className="md:col-span-7 flex flex-col gap-4">
               <div className="bg-slate-950/70 border-3 border-black rounded-xl p-4 shadow-[4px_4px_0px_#000] space-y-3.5">
                 <div className="flex items-center justify-between border-b border-slate-800 pb-2">
-                  <span className="text-xs font-black uppercase text-slate-400 tracking-wider">
+                  <span className="text-xs sm:text-sm font-black text-white leading-tight">
                     Status Awal Kehidupan
-                  </span>
-                  <span className="text-xs font-bold text-comic-yellow">
-                    Kondisi Awal Game
                   </span>
                 </div>
 
@@ -177,8 +174,8 @@ export const CharacterDetail: React.FC<CharacterDetailProps> = ({ character }) =
                 />
 
                 {/* 4. Luck Level */}
-                <div className="pt-1 flex items-center justify-between text-xs sm:text-sm font-bold bg-slate-900/80 px-3 py-2 rounded-lg border border-black/80">
-                  <span className="text-slate-300 uppercase tracking-wider font-extrabold text-xs">
+                <div className="pt-1 flex items-center justify-between text-xs sm:text-sm font-bold">
+                  <span className="text-xs sm:text-sm font-black text-white leading-tight">
                     Tingkat Keberuntungan:
                   </span>
                   <span className="text-amber-300 font-black tracking-wide">

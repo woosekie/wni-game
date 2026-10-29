@@ -1,188 +1,204 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import confetti from 'canvas-confetti';
+import { Sparkles, Dices } from 'lucide-react';
+import { CHARACTERS } from '../data/characters';
 import type { Character } from '../types/game';
+import { CharacterDetail } from './CharacterDetail';
 import { sound } from '../utils/sound';
 
 interface GameBoardModalProps {
   isOpen: boolean;
   onClose: () => void;
-  selectedCharacter: Character;
 }
+
+const FATE_MESSAGES = [
+  'Menentukan garis tangan & nasib kelahiranmu...',
+  'Mengocok Kartu Keluarga & akta kelahiran...',
+  'Mengecek saldo rekening & koneksi orang dalam...',
+  'Menghitung beban hidup & cicilan masa depan...',
+];
 
 export const GameBoardModal: React.FC<GameBoardModalProps> = ({
   isOpen,
   onClose,
-  selectedCharacter,
 }) => {
+  const [isRolling, setIsRolling] = useState<boolean>(true);
+  const [previewIndex, setPreviewIndex] = useState<number>(0);
+  const [messageIndex, setMessageIndex] = useState<number>(0);
+  const [fatedCharacter, setFatedCharacter] = useState<Character>(CHARACTERS[0]);
+  const [rollProgress, setRollProgress] = useState<number>(0);
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    setIsRolling(true);
+    setRollProgress(0);
+    setMessageIndex(0);
+
+    // Pick final random character (fate)
+    const finalIndex = Math.floor(Math.random() * CHARACTERS.length);
+    const chosenChar = CHARACTERS[finalIndex];
+    setFatedCharacter(chosenChar);
+
+    let step = 0;
+    const totalSteps = 22;
+    let timeoutId: ReturnType<typeof setTimeout>;
+
+    const runRoulette = () => {
+      step += 1;
+      setRollProgress(Math.min(Math.round((step / totalSteps) * 100), 100));
+
+      if (step < totalSteps) {
+        setPreviewIndex((prev) => (prev + 1) % CHARACTERS.length);
+        setMessageIndex(Math.min(Math.floor((step / totalSteps) * FATE_MESSAGES.length), FATE_MESSAGES.length - 1));
+        sound.playClick();
+
+        // Gradually slow down the roulette spin
+        const delay = 65 + Math.pow(step / totalSteps, 2.2) * 240;
+        timeoutId = setTimeout(runRoulette, delay);
+      } else {
+        // Land on the fated character
+        setPreviewIndex(finalIndex);
+        setIsRolling(false);
+        sound.playStartGame();
+        try {
+          confetti({
+            particleCount: 90,
+            spread: 75,
+            origin: { y: 0.6 },
+            colors: ['#FFE600', '#FF2E4D', '#10B981', '#00A8FF', '#A855F7'],
+          });
+        } catch {}
+      }
+    };
+
+    timeoutId = setTimeout(runRoulette, 80);
+
+    return () => {
+      clearTimeout(timeoutId);
+    };
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
-  const formatCurrency = (val: number) => 'Rp ' + val.toLocaleString('id-ID');
-
-  const boardTiles = [
-    { name: 'START (GAJI)' },
-    { name: 'KOS BULANAN' },
-    { name: 'KERJA LEMBUR' },
-    { name: 'PETAK OTT KPK' },
-    { name: 'BELANJA PASAR' },
-    { name: 'VIRAL MEDSOS' },
-    { name: 'RAZIA & PUNGLI' },
-    { name: 'RUMAH SAKIT' },
-  ];
+  const activeRollChar = CHARACTERS[previewIndex];
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-md overflow-y-auto">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9, y: 20 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.9 }}
-          transition={{ type: 'spring', damping: 20 }}
-          className="relative w-full max-w-3xl bg-slate-900 border-4 border-black rounded-3xl p-5 sm:p-7 shadow-comic-xl overflow-hidden my-auto"
-        >
-          {/* Header */}
-          <div className="text-center pb-4 border-b-2 border-black/80">
-            <div className="inline-block px-3 py-1 bg-comic-yellow text-black font-black text-xs uppercase tracking-wider rounded-full border-2 border-black shadow-[2px_2px_0px_#000] mb-2">
-              KARAKTER SIAP BERAKSI
-            </div>
-            <h2 className="text-2xl sm:text-3xl font-black text-white font-sans">
-              SIAP BERTAHAN HIDUP DI INDONESIA!
-            </h2>
-            <p className="text-xs sm:text-sm text-slate-300 mt-1">
-              Karakter Terpilih:{' '}
-              <span className="text-comic-yellow font-black">{selectedCharacter.name}</span>
-            </p>
-          </div>
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/85 backdrop-blur-md overflow-y-auto">
+        {isRolling ? (
+          /* PHASE 1: FATE RANDOMIZER / GACHA KELAHIRAN */
+          <motion.div
+            key="rolling-fate"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            className="relative w-full max-w-md bg-slate-900 border-4 border-black rounded-3xl p-6 sm:p-8 shadow-comic-xl text-center overflow-hidden my-auto"
+          >
+            <div className="absolute inset-0 comic-dots opacity-10 pointer-events-none" />
 
-          {/* Character Overview Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 my-5">
-            {/* Player Profile Card */}
-            <div className="bg-slate-950 border-3 border-comic-yellow rounded-2xl p-4 shadow-[4px_4px_0px_#FFE600] relative overflow-hidden flex flex-col justify-between">
-              <span className="absolute top-2 right-2 text-[10px] font-black px-2 py-0.5 rounded bg-comic-yellow text-black border border-black">
-                KARAKTER UTAMA
+            <div className="relative z-10 flex flex-col items-center">
+              <div className="inline-flex items-center gap-1.5 px-3.5 py-1 bg-comic-yellow text-black font-black text-xs rounded-full border-2 border-black shadow-[2px_2px_0px_#000] mb-3">
+                <Dices size={14} className="animate-spin" />
+                <span>RODA TAKDIR WNI</span>
+              </div>
+
+              <h2 className="text-xl sm:text-2xl font-black text-white leading-tight">
+                Menentukan Takdir Kelahiranmu...
+              </h2>
+              <p className="text-xs text-slate-300 mt-1.5 min-h-[20px]">
+                {FATE_MESSAGES[messageIndex]}
+              </p>
+
+              {/* Cycling Character Card */}
+              <motion.div
+                key={activeRollChar.id + '-' + rollProgress}
+                initial={{ scale: 0.92, opacity: 0.7, y: 8 }}
+                animate={{ scale: 1, opacity: 1, y: 0 }}
+                transition={{ duration: 0.12 }}
+                className="my-6 w-48 h-60 sm:w-52 sm:h-64 rounded-2xl border-4 border-comic-yellow shadow-comic-lg overflow-hidden relative bg-slate-950"
+              >
+                <img
+                  src={activeRollChar.selectedImage || activeRollChar.image}
+                  alt={activeRollChar.name}
+                  className="w-full h-full object-cover object-top"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-transparent to-transparent" />
+                <div className="absolute bottom-3 left-3 right-3 text-center">
+                  <div className="text-sm font-black text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
+                    {activeRollChar.name}
+                  </div>
+                  <div className="text-[10px] text-comic-yellow font-bold truncate">
+                    {activeRollChar.roleTitle}
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Progress Bar */}
+              <div className="w-full h-4 rounded-xl border-2 border-black bg-slate-950 p-0.5 overflow-hidden shadow-[2px_2px_0px_#000]">
+                <motion.div
+                  className="h-full bg-comic-yellow rounded-lg"
+                  animate={{ width: `${rollProgress}%` }}
+                  transition={{ duration: 0.1 }}
+                />
+              </div>
+              <span className="text-[11px] font-black text-comic-yellow mt-2">
+                {rollProgress}% • Takdir tidak bisa dipilih!
               </span>
-
-              <div>
-                <div className="flex items-center gap-3">
-                  <div
-                    className="w-16 h-16 rounded-xl border-2 border-black overflow-hidden flex items-center justify-center flex-shrink-0"
-                    style={{ backgroundColor: selectedCharacter.color.primary }}
-                  >
-                    <img
-                      src={selectedCharacter.selectedImage || selectedCharacter.image}
-                      alt={selectedCharacter.name}
-                      className="w-full h-full object-cover object-top"
-                    />
-                  </div>
-                  <div>
-                    <h3 className="text-base font-black text-white">
-                      {selectedCharacter.name}
-                    </h3>
-                    <p className="text-xs text-slate-400">{selectedCharacter.roleTitle}</p>
-                    <p className="text-xs font-bold text-amber-300 mt-1">
-                      Modal: {formatCurrency(selectedCharacter.stats.uangAwal)}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Status Pills */}
-                <div className="grid grid-cols-3 gap-2 mt-4 pt-3 border-t border-slate-800 text-center text-xs font-bold">
-                  <div className="bg-slate-900 p-1.5 rounded-lg border border-black">
-                    <div className="text-[10px] text-slate-400">DARAH</div>
-                    <div className="text-emerald-400 font-black">{selectedCharacter.stats.kesehatan}%</div>
-                  </div>
-                  <div className="bg-slate-900 p-1.5 rounded-lg border border-black">
-                    <div className="text-[10px] text-slate-400">MENTAL</div>
-                    <div className="text-sky-400 font-black">{selectedCharacter.stats.mental}%</div>
-                  </div>
-                  <div className="bg-slate-900 p-1.5 rounded-lg border border-black">
-                    <div className="text-[10px] text-slate-400">LUCK</div>
-                    <div className="text-amber-400 font-black">{selectedCharacter.stats.luck}</div>
-                  </div>
-                </div>
+            </div>
+          </motion.div>
+        ) : (
+          /* PHASE 2: REVEALED FATED CHARACTER USING CHARACTER DETAIL CARD */
+          <motion.div
+            key="revealed-fate"
+            initial={{ opacity: 0, scale: 0.92, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.92 }}
+            transition={{ type: 'spring', damping: 18 }}
+            className="relative w-full max-w-5xl my-auto space-y-4"
+          >
+            {/* Fate Header Banner */}
+            <div className="bg-slate-900/95 border-4 border-black rounded-2xl p-4 text-center shadow-comic-lg">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-comic-yellow text-black font-black text-xs rounded-full border-2 border-black shadow-[2px_2px_0px_#000] mb-1.5">
+                <Sparkles size={14} />
+                <span>TAKDIR KELAHIRANMU TELAH DITENTUKAN!</span>
               </div>
+              <h2 className="text-xl sm:text-2xl font-black text-white font-sans">
+                Kamu Lahir di Dunia Sebagai{' '}
+                <span className="text-comic-yellow">{fatedCharacter.name}</span>!
+              </h2>
             </div>
 
-            {/* Special Abilities Card */}
-            <div className="bg-slate-950 border-3 border-black rounded-2xl p-4 shadow-comic flex flex-col justify-between">
-              <div>
-                <span className="text-xs font-black text-slate-300 uppercase tracking-wider block mb-2">
-                  Kemampuan Khusus Karakter:
-                </span>
-                <div className="space-y-2 text-xs">
-                  <div className="bg-emerald-950/40 border border-emerald-500/40 rounded-xl p-2.5">
-                    <div className="font-black text-emerald-400 mb-0.5">
-                      {selectedCharacter.buff.title}
-                    </div>
-                    <p className="text-[11px] text-slate-300 leading-snug">
-                      {selectedCharacter.buff.description}
-                    </p>
-                  </div>
+            {/* Character Detail Card (same as bottom card on Character List page) */}
+            <CharacterDetail character={fatedCharacter} />
 
-                  <div className="bg-red-950/40 border border-red-500/40 rounded-xl p-2.5">
-                    <div className="font-black text-red-400 mb-0.5">
-                      {selectedCharacter.debuff.title}
-                    </div>
-                    <p className="text-[11px] text-slate-300 leading-snug">
-                      {selectedCharacter.debuff.description}
-                    </p>
-                  </div>
-                </div>
-              </div>
+            {/* Action Buttons */}
+            <div className="flex flex-col sm:flex-row items-center gap-3">
+              <button
+                type="button"
+                onClick={() => {
+                  sound.playClick();
+                  onClose();
+                }}
+                className="w-full sm:w-auto px-6 py-3.5 rounded-xl border-3 border-black bg-slate-900 hover:bg-slate-800 text-white font-black text-xs sm:text-sm shadow-comic hover:shadow-comic-lg active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all flex items-center justify-center cursor-pointer"
+              >
+                Kembali
+              </button>
 
-              <div className="mt-3 pt-2 border-t border-slate-800 flex items-center justify-between text-xs">
-                <span className="text-slate-400 font-bold">Tingkat Kesulitan:</span>
-                <span className="font-black text-comic-yellow">{selectedCharacter.difficulty}</span>
-              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  sound.playStartGame();
+                  alert(`Selamat berjuang sebagai ${fatedCharacter.name}! Memulai Babak 1 "Bertahan Hidup Sebagai WNI"!`);
+                }}
+                className="w-full sm:flex-1 px-6 py-3.5 rounded-xl border-3 border-black bg-comic-yellow hover:bg-yellow-300 text-black font-black text-sm sm:text-base shadow-comic hover:shadow-comic-lg active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all flex items-center justify-center cursor-pointer"
+              >
+                TERIMA TAKDIR & LEMPAR DADU BABAK 1
+              </button>
             </div>
-          </div>
-
-          {/* Mini Board Track Preview */}
-          <div className="mb-6">
-            <span className="text-xs font-black uppercase text-slate-300 block mb-2">
-              Preview Lintasan Papan Permainan (Sneak-Peek Board Game):
-            </span>
-            <div className="grid grid-cols-4 sm:grid-cols-8 gap-1.5 sm:gap-2">
-              {boardTiles.map((tile, i) => (
-                <div
-                  key={i}
-                  className="bg-slate-950 border-2 border-black rounded-xl p-2 text-center shadow-[2px_2px_0px_#000] flex flex-col items-center justify-center hover:scale-105 transition-transform"
-                >
-                  <span className="text-xs font-black text-comic-yellow mb-1">
-                    #{i + 1}
-                  </span>
-                  <span className="text-[9px] font-black uppercase text-slate-200 leading-tight">
-                    {tile.name}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row items-center gap-3 pt-3 border-t-2 border-black/80">
-            <button
-              type="button"
-              onClick={() => {
-                sound.playClick();
-                onClose();
-              }}
-              className="w-full sm:w-auto px-5 py-3 rounded-xl border-3 border-black bg-slate-800 hover:bg-slate-700 text-white font-black text-xs sm:text-sm shadow-comic hover:shadow-comic-lg active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all flex items-center justify-center cursor-pointer"
-            >
-              Ganti / Pilih Ulang Karakter
-            </button>
-
-            <button
-              type="button"
-              onClick={() => {
-                sound.playStartGame();
-                alert('Memulai Babak 1 Board Game "Bertahan Hidup Sebagai WNI"!');
-              }}
-              className="w-full sm:flex-1 px-6 py-3.5 rounded-xl border-3 border-black bg-comic-yellow hover:bg-yellow-300 text-black font-black text-sm sm:text-base shadow-comic hover:shadow-comic-lg active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all flex items-center justify-center cursor-pointer"
-            >
-              LEMPAR DADU BABAK 1
-            </button>
-          </div>
-        </motion.div>
+          </motion.div>
+        )}
       </div>
     </AnimatePresence>
   );
