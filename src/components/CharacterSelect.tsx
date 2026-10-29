@@ -4,7 +4,6 @@ import { CHARACTERS } from '../data/characters';
 import type { Character } from '../types/game';
 import { CharacterCard } from './CharacterCard';
 import { CharacterDetail } from './CharacterDetail';
-import { GameBoardModal } from './GameBoardModal';
 import { sound } from '../utils/sound';
 import {
   Volume2,
@@ -21,8 +20,7 @@ interface CharacterSelectProps {
   onToggleBgm: () => void;
   soundEnabled: boolean;
   onToggleSound: () => void;
-  isModalOpen: boolean;
-  setIsModalOpen: (open: boolean) => void;
+  onStartFateRoll: () => void;
 }
 
 export const CharacterSelect: React.FC<CharacterSelectProps> = ({
@@ -33,8 +31,7 @@ export const CharacterSelect: React.FC<CharacterSelectProps> = ({
   onToggleBgm,
   soundEnabled,
   onToggleSound,
-  isModalOpen,
-  setIsModalOpen,
+  onStartFateRoll,
 }) => {
   const handleSelectCharacter = (char: Character) => {
     onSelectCharacter(char);
@@ -43,7 +40,7 @@ export const CharacterSelect: React.FC<CharacterSelectProps> = ({
 
   const handleStartGame = () => {
     sound.playClick();
-    setIsModalOpen(true);
+    onStartFateRoll();
   };
 
   return (
@@ -138,12 +135,6 @@ export const CharacterSelect: React.FC<CharacterSelectProps> = ({
       <section className="mb-6">
         <CharacterDetail character={selectedCharacter} />
       </section>
-
-      {/* Game Ready Preview Modal */}
-      <GameBoardModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-      />
     </div>
   );
 };

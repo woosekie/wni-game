@@ -4,19 +4,23 @@ import type { Character } from './types/game';
 import { CharacterSelect } from './components/CharacterSelect';
 import { MainMenu } from './components/MainMenu';
 import { SettingsModal } from './components/SettingsModal';
-import { GameBoardModal } from './components/GameBoardModal';
+import { GameBoardModal, type BotOpponent } from './components/GameBoardModal';
+import { GameBoardScreen } from './components/GameBoardScreen';
 import { sound } from './utils/sound';
 
-type ScreenView = 'menu' | 'characters';
+type ScreenView = 'menu' | 'characters' | 'playing';
 
 export default function App() {
   const [currentView, setCurrentView] = useState<ScreenView>('menu');
   const [selectedCharacter, setSelectedCharacter] = useState<Character>(CHARACTERS[0]);
+  const [playingCharacter, setPlayingCharacter] = useState<Character>(CHARACTERS[0]);
+  const [playingBots, setPlayingBots] = useState<BotOpponent[]>([]);
   const [soundEnabled, setSoundEnabled] = useState<boolean>(sound.sfxEnabled);
   const [bgmEnabled, setBgmEnabled] = useState<boolean>(sound.bgmEnabled);
   const [bgmVolume, setBgmVolume] = useState<number>(sound.bgmVolume);
   const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [gameSessionId, setGameSessionId] = useState<number>(1);
 
   useEffect(() => {
     const handleFirstGesture = () => {
@@ -55,32 +59,40 @@ export default function App() {
     sound.setBGMVolume(val);
   };
 
+  const handleAcceptFate = (fatedChar: Character, bots: BotOpponent[]) => {
+    setPlayingCharacter(fatedChar);
+    setPlayingBots(bots);
+    setGameSessionId((prev) => prev + 1);
+    setIsModalOpen(false);
+    setCurrentView('playing');
+  };
+
   return (
     <div
-      className="min-h-screen bg-[#0B0F19] bg-cover bg-center bg-no-repeat bg-fixed text-white relative"
+      className="min-h-screen bg-[#1E140E] bg-cover bg-center bg-no-repeat bg-fixed text-white relative"
       style={{ backgroundImage: "url('/assets/characters/background.jpg')" }}
     >
-      {/* Overlay gelap tipis agar teks & UI tetap kontras dan jelas */}
-      <div className="fixed inset-0 bg-slate-950/45 pointer-events-none z-0" />
+      {/* Overlay menyesuaikan suasana: bening saat bermain agar background terlihat jelas */}
+      <div
+        className={`fixed inset-0 pointer-events-none z-0 transition-colors duration-300 ${
+          currentView === 'playing' ? 'bg-[#1E140E]/10' : 'bg-slate-950/45'
+        }`}
+      />
 
       <div className="relative z-10">
-        {currentView === 'menu' ? (
-          <>
-            <MainMenu
-              onStartPlay={() => setIsModalOpen(true)}
-              onOpenCharacterList={() => setCurrentView('characters')}
-              onOpenSettings={() => setIsSettingsOpen(true)}
-              bgmEnabled={bgmEnabled}
-              onToggleBgm={handleToggleBgm}
-              soundEnabled={soundEnabled}
-              onToggleSound={handleToggleSound}
-            />
-            <GameBoardModal
-              isOpen={isModalOpen}
-              onClose={() => setIsModalOpen(false)}
-            />
-          </>
-        ) : (
+        {currentView === 'menu' && (
+          <MainMenu
+            onStartPlay={() => setIsModalOpen(true)}
+            onOpenCharacterList={() => setCurrentView('characters')}
+            onOpenSettings={() => setIsSettingsOpen(true)}
+            bgmEnabled={bgmEnabled}
+            onToggleBgm={handleToggleBgm}
+            soundEnabled={soundEnabled}
+            onToggleSound={handleToggleSound}
+          />
+        )}
+
+        {currentView === 'characters' && (
           <CharacterSelect
             selectedCharacter={selectedCharacter}
             onSelectCharacter={setSelectedCharacter}
@@ -89,10 +101,31 @@ export default function App() {
             onToggleBgm={handleToggleBgm}
             soundEnabled={soundEnabled}
             onToggleSound={handleToggleSound}
-            isModalOpen={isModalOpen}
-            setIsModalOpen={setIsModalOpen}
+            onStartFateRoll={() => setIsModalOpen(true)}
           />
         )}
+
+        {currentView === 'playing' && (
+          <GameBoardScreen
+            key={gameSessionId}
+            character={playingCharacter}
+            bots={playingBots}
+            onExitToMenu={() => setCurrentView('menu')}
+            onPlayAgainFate={() => {
+              setIsModalOpen(true);
+            }}
+            bgmEnabled={bgmEnabled}
+            onToggleBgm={handleToggleBgm}
+            soundEnabled={soundEnabled}
+            onToggleSound={handleToggleSound}
+          />
+        )}
+
+        <GameBoardModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onAcceptFate={handleAcceptFate}
+        />
 
         <SettingsModal
           isOpen={isSettingsOpen}
